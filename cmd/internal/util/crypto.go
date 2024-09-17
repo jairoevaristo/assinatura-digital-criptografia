@@ -69,21 +69,33 @@ func VerifySignature(publicKey string, message string, signature []byte) error {
 	return nil
 }
 
-func EncryptMessage(publicKey *rsa.PublicKey, message string) ([]byte, error) {
+func EncryptMessage(publicKey string, message string) (string, error) {
+	publicKeyParseRSA, err := parsePublicKeyFromPEM(publicKey)
+	if err != nil {
+		return "", err
+	}
+
 	label := []byte("")
 	hash := sha256.New()
-	ciphertext, err := rsa.EncryptOAEP(hash, rand.Reader, publicKey, []byte(message), label)
+	ciphertext, err := rsa.EncryptOAEP(hash, rand.Reader, publicKeyParseRSA, []byte(message), label)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return ciphertext, nil
+	return string(ciphertext), nil
 }
 
-func DecryptMessage(privateKey *rsa.PrivateKey, ciphertext []byte) (string, error) {
+func DecryptMessage(privateKey string, ciphertext []byte) (string, error) {
+	publicKeyParseRSA, err := parsePrivateKeyFromPEM(privateKey)
+	if err != nil {
+		return "", err
+	}
+
 	label := []byte("")
 	hash := sha256.New()
-	plaintext, err := rsa.DecryptOAEP(hash, rand.Reader, privateKey, ciphertext, label)
+
+	plaintext, err := rsa.DecryptOAEP(hash, rand.Reader, publicKeyParseRSA, ciphertext, label)
 	if err != nil {
+
 		return "", err
 	}
 	return string(plaintext), nil

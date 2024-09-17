@@ -17,43 +17,50 @@ func NewChat(resendEmail *service.ResendEmail) *Chat {
 	}
 }
 
-func (c *Chat) SendPublicKey(to []string) (string, error) {
+func (c *Chat) SendPublicKey() (string, string, error) {
 	bobPrivateKey, err := util.GenerateKeyPair(2048)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	bobPubPEM := util.ExportPublicKeyAsPEM(&bobPrivateKey.PublicKey)
-	// bobPrivPEM := util.ExportPrivateKeyAsPEM(bobPrivateKey)
+	bobPrivPEM := util.ExportPrivateKeyAsPEM(bobPrivateKey)
 
-	err = c.resendEmail.Send(to, []byte(bobPubPEM))
-	if err != nil {
-		return "", err
-	}
-
-	return bobPubPEM, nil
+	return bobPubPEM, bobPrivPEM, nil
 }
 
-func (c *Chat) SendMessage(message string, privateKey string) ([]byte, error) {
-	signature, err := util.SignMessage(privateKey, message)
+func (c *Chat) SendMessage(message string, privateKey string, publicKey string) ([]byte, string, error) {
+	cipherMessage, err := util.EncryptMessage(publicKey, message)
 	if err != nil {
-		return nil, err
+		return nil, "", err
+	}
+
+	signature, err := util.SignMessage(privateKey, cipherMessage)
+	if err != nil {
+		return nil, cipherMessage, err
 	}
 
 	fmt.Println("Bob assinou a mensagem com sucesso!")
-	fmt.Printf("[Assinatura (em bytes)]: %x\n\n", signature)
+	fmt.Printf("[Assinatura]: %x\n\n", signature)
 
-	return signature, nil
+	return signature, cipherMessage, nil
 }
 
-func (c *Chat) ReceiveMessage(message string, publicKey string, signature []byte) error {
+func (c *Chat) ReceiveMessage(message string, publicKey string, signature []byte, privateKey string) error {
 	err := util.VerifySignature(publicKey, message, signature)
 	if err != nil {
 		return err
 	}
 
 	fmt.Println("Alice verificou a autenticidade da mensagem com sucesso!")
-	fmt.Printf("[Mensagem recebida]: %s\n\n", message)
+
+	messageDesciphered, err := util.DecryptMessage(privateKey, []byte(message))
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Alice descifrou a mensagem com sucesso!\n")
+	fmt.Printf("[Mensagem recebida]: %s\n\n", messageDesciphered)
 
 	return nil
 }

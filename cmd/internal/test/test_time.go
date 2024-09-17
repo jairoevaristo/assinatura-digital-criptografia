@@ -14,7 +14,10 @@ func TestTime() {
 	if err != nil {
 		log.Fatalf("Erro ao gerar chave privada de Bob: %v", err)
 	}
-	bobPublicKey := &bobPrivateKey.PublicKey
+
+	bobPubPEM := util.ExportPublicKeyAsPEM(&bobPrivateKey.PublicKey)
+	bobPrivPEM := util.ExportPrivateKeyAsPEM(bobPrivateKey)
+
 	fmt.Printf("Tempo para gerar par de chaves de Bob: %v\n", time.Since(start))
 
 	start = time.Now()
@@ -26,14 +29,14 @@ func TestTime() {
 	message := "Esta é uma mensagem secreta de Bob para Alice."
 
 	start = time.Now()
-	signature, err := util.SignMessage(bobPrivateKey, message)
+	signature, err := util.SignMessage(bobPrivPEM, message)
 	if err != nil {
 		log.Fatalf("Erro ao assinar a mensagem: %v", err)
 	}
 	fmt.Printf("Tempo para assinar a mensagem: %v\n", time.Since(start))
 
 	start = time.Now()
-	err = util.VerifySignature(bobPublicKey, message, signature)
+	err = util.VerifySignature(bobPubPEM, message, signature)
 	if err != nil {
 		log.Fatalf("Erro na verificação da assinatura: %v", err)
 	}
@@ -41,14 +44,14 @@ func TestTime() {
 
 	aliceMessage := "Mensagem confidencial de Alice para Bob."
 	start = time.Now()
-	encryptedMessage, err := util.EncryptMessage(bobPublicKey, aliceMessage)
+	encryptedMessage, err := util.EncryptMessage(bobPubPEM, aliceMessage)
 	if err != nil {
 		log.Fatalf("Erro ao cifrar a mensagem: %v", err)
 	}
 	fmt.Printf("Tempo para cifrar a mensagem: %v\n", time.Since(start))
 
 	start = time.Now()
-	decryptedMessage, err := util.DecryptMessage(bobPrivateKey, encryptedMessage)
+	decryptedMessage, err := util.DecryptMessage(bobPrivPEM, []byte(encryptedMessage))
 	if err != nil {
 		log.Fatalf("Erro ao decifrar a mensagem: %v", err)
 	}

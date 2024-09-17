@@ -12,13 +12,15 @@ func TestOverflow() {
 	message := "Esta é uma mensagem secreta de Bob para Alice."
 
 	var bobPrivateKey *rsa.PrivateKey
+
 	util.MeasureAverageTime("geração de chaves de Bob", iterations, func() error {
 		var err error
 		bobPrivateKey, err = util.GenerateKeyPair(2048)
 		return err
 	})
 
-	bobPublicKey := &bobPrivateKey.PublicKey
+	bobPubPEM := util.ExportPublicKeyAsPEM(&bobPrivateKey.PublicKey)
+	bobPrivPEM := util.ExportPrivateKeyAsPEM(bobPrivateKey)
 
 	util.MeasureAverageTime("geração de chaves de Alice", iterations, func() error {
 		_, err := util.GenerateKeyPair(2048)
@@ -28,23 +30,23 @@ func TestOverflow() {
 	var signature []byte
 	util.MeasureAverageTime("assinatura da mensagem por Bob", iterations, func() error {
 		var err error
-		signature, err = util.SignMessage(bobPrivateKey, message)
+		signature, err = util.SignMessage(bobPrivPEM, message)
 		return err
 	})
 
 	util.MeasureAverageTime("verificação da assinatura por Alice", iterations, func() error {
-		return util.VerifySignature(bobPublicKey, message, signature)
+		return util.VerifySignature(bobPubPEM, message, signature)
 	})
 
-	var encryptedMessage []byte
+	var encryptedMessage string
 	util.MeasureAverageTime("cifração da mensagem por Alice", iterations, func() error {
 		var err error
-		encryptedMessage, err = util.EncryptMessage(bobPublicKey, message)
+		encryptedMessage, err = util.EncryptMessage(bobPubPEM, message)
 		return err
 	})
 
 	util.MeasureAverageTime("decifração da mensagem por Bob", iterations, func() error {
-		_, err := util.DecryptMessage(bobPrivateKey, encryptedMessage)
+		_, err := util.DecryptMessage(bobPrivPEM, []byte(encryptedMessage))
 		return err
 	})
 }

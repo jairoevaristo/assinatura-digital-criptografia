@@ -1,7 +1,7 @@
 ## Relatório sobre o Algoritmo de Assinatura Digital com Criptografia RSA
 
 ### Introdução
-Este algoritmo utiliza criptografia assimétrica RSA para garantir a segurança e autenticidade das mensagens trocadas entre Bob e Alice. Ele envolve a geração de chaves, assinatura e verificação de mensagens, e cifração e decifração de dados, além de simular o envio de uma chave pública por e-mail.
+Este algoritmo utiliza criptografia assimétrica RSA para garantir a segurança e autenticidade das mensagens trocadas entre Bob e Alice. Ele envolve a geração de chaves, assinatura e verificação de mensagens, e cifração e decifração de dados, além de simular o envio de uma chave pública.
 
 ### Componentes Principais
 

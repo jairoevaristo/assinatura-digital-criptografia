@@ -1,7 +1,11 @@
 ## Relatório sobre o Algoritmo de Assinatura Digital com Criptografia RSA
 
+### Integrante(s)
+* Jairo Gomes Evaristo - 497466
+* Carlos Aldrim Freire Melo Filho - 499075
+
 ### Introdução
-Este algoritmo utiliza criptografia assimétrica RSA para garantir a segurança e autenticidade das mensagens trocadas entre Bob e Alice. Ele envolve a geração de chaves, assinatura e verificação de mensagens, e cifração e decifração de dados, além de simular o envio de uma chave pública.
+Este algoritmo utiliza criptografia assimétrica RSA para garantir a segurança e autenticidade das mensagens trocadas entre Bob e Alice. Ele envolve a geração de chaves, assinatura e verificação de mensagens, e cifração e decifração de dados.
 
 ### Componentes Principais
 
@@ -112,36 +116,7 @@ func DecryptMessage(privateKey string, ciphertext []byte) (string, error) {
 }
 ```
 
-#### 5. **Envio de Chave Pública via E-mail**
-
-A chave pública de Bob é enviada a Alice por e-mail usando a API `Resend`. A função `Send` prepara o e-mail e envia um anexo com a chave pública em formato de texto.
-
-```go
-func (r *ResendEmail) Send(to []string, attachments []byte) error {
-    params := &resend.SendEmailRequest{
-        From:    "Chatbot <jairoevaristodev@gmail.com>",
-        To:      to,
-        Html:    "<p>Olá, essa é sua chave publica para troca de mensagens</p>",
-        Subject: "Sua chave pública chegou!",
-        Attachments: []*resend.Attachment{
-            {
-                Content:  attachments,
-                Filename: "public-key.txt",
-            },
-        },
-    }
-
-    sent, err := r.client.Emails.Send(params)
-    if err != nil {
-        return err
-    }
-
-    fmt.Println("Email successfully send", sent.Id)
-    return nil
-}
-```
-
-#### 6. **Medição de Tempo**
+#### 5. **Medição de Tempo**
 
 As funções que medem o tempo de execução são usadas para comparar o desempenho das operações, como geração de chaves, assinatura, verificação, cifração e decifração.
 
@@ -163,11 +138,17 @@ func MeasureAverageTime(operationName string, iterations int, operation func() e
 }
 ```
 
+#### Gráfico de Tempos de Execução
+![image](https://github.com/user-attachments/assets/c7d72276-817f-4dde-b41c-ccd2d23a4095)
+
+#### Gráfico de Tempos de Execução (10 vezes)
+![image](https://github.com/user-attachments/assets/c6bebd0c-6c86-4956-ad6a-386b2d6b5cd8)
+
 ### Fluxo de Execução
 
 1. **Geração de Chaves:**
    - Bob gera seu par de chaves (pública e privada).
-   - A chave pública é exportada e enviada para Alice.
+   - A chave pública é exportada e compartilhada com Alice.
 
 ```go
 bobPrivateKey, err := util.GenerateKeyPair(2048)
@@ -197,15 +178,6 @@ encryptedMessage, err := util.EncryptMessage(bobPubPEM, message)
 decryptedMessage, err := util.DecryptMessage(bobPrivPEM, []byte(encryptedMessage))
 ```
 
-5. **Envio de Chave Pública:**
-   - Bob envia a chave pública para Alice por e-mail.
-
-```go
-err := resendEmail.Send([]string{"alice@example.com"}, []byte(bobPubPEM))
-```
-
-Para iniciar a aplicação e realizar as operações de criptografia, assinatura digital, e envio de e-mail, siga os passos descritos abaixo. Vamos focar em como rodar o projeto Go.
-
 ### Como Iniciar a Aplicação
 
 #### Compilar e Executar o Projeto
@@ -216,6 +188,12 @@ Navegue até a pasta raiz do projeto (onde está o arquivo `go.mod`) e execute o
 go run cmd/main.go message secreta
 ```
 
-#### Conclusão
+### Gravação (Link)
+https://ufcbr-my.sharepoint.com/:v:/g/personal/jairoevaristo_alu_ufc_br/EZ7qJyGPKfVEkd-gxDwwXDMB1icsQ5kf4rFTiAPC00qbDA?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=r1QqhX
 
-O algoritmo provê uma solução robusta para autenticar e proteger mensagens usando criptografia RSA. O código ilustra todas as etapas necessárias para garantir confidencialidade e integridade, integrando também o envio da chave pública por e-mail. As medições de tempo ajudam a avaliar o desempenho das operações, fornecendo insights sobre o custo computacional das operações criptográficas.
+### Github
+https://github.com/jairoevaristo/assinatura-digital-criptografia
+
+### Conclusão
+
+O algoritmo provê uma solução robusta para autenticar e proteger mensagens usando criptografia RSA. O código ilustra todas as etapas necessárias para garantir confidencialidade e integridade. As medições de tempo ajudam a avaliar o desempenho das operações, fornecendo insights sobre o custo computacional das operações criptográficas.

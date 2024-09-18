@@ -139,10 +139,10 @@ func MeasureAverageTime(operationName string, iterations int, operation func() e
 ```
 
 #### Gráfico de Tempos de Execução
-![image](https://github.com/user-attachments/assets/c7d72276-817f-4dde-b41c-ccd2d23a4095)
+https://github.com/user-attachments/assets/c7d72276-817f-4dde-b41c-ccd2d23a4095
 
 #### Gráfico de Tempos de Execução (10 vezes)
-![image](https://github.com/user-attachments/assets/c6bebd0c-6c86-4956-ad6a-386b2d6b5cd8)
+https://github.com/user-attachments/assets/c6bebd0c-6c86-4956-ad6a-386b2d6b5cd8
 
 ### Fluxo de Execução
 

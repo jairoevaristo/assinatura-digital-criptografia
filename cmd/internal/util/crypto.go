@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	"gonum.org/v1/plot/plotter"
 )
 
 func ExportPublicKeyAsPEM(pubkey *rsa.PublicKey) string {
@@ -101,7 +103,7 @@ func DecryptMessage(privateKey string, ciphertext []byte) (string, error) {
 	return string(plaintext), nil
 }
 
-func MeasureAverageTime(operationName string, iterations int, operation func() error) time.Duration {
+func MeasureAverageTime(operationName string, iterations int, execTimes plotter.XYs, operation func() error) time.Duration {
 	var totalDuration time.Duration
 	for i := 0; i < iterations; i++ {
 		start := time.Now()
@@ -110,6 +112,8 @@ func MeasureAverageTime(operationName string, iterations int, operation func() e
 			log.Fatalf("Erro na operação %s: %v", operationName, err)
 		}
 		totalDuration += time.Since(start)
+		execTimes[i].X = float64(i + 1)
+		execTimes[i].Y = float64(totalDuration.Milliseconds())
 	}
 	averageDuration := time.Duration(totalDuration.Milliseconds()/int64(iterations)) * time.Millisecond
 	fmt.Printf("Tempo médio para %s: %v ms\n", operationName, averageDuration.Milliseconds())

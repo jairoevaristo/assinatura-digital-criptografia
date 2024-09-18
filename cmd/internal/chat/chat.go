@@ -26,6 +26,11 @@ func (c *Chat) SendPublicKey() (string, string, error) {
 	bobPubPEM := util.ExportPublicKeyAsPEM(&bobPrivateKey.PublicKey)
 	bobPrivPEM := util.ExportPrivateKeyAsPEM(bobPrivateKey)
 
+	// err = c.resendEmail.Send([]string{"jairoevaristodev@gmail.com"}, []byte(bobPubPEM))
+	// if err != nil {
+	// 	return "", "", err
+	// }
+
 	return bobPubPEM, bobPrivPEM, nil
 }
 
@@ -40,7 +45,7 @@ func (c *Chat) SendMessage(message string, privateKey string, publicKey string) 
 		return nil, cipherMessage, err
 	}
 
-	fmt.Println("Bob assinou a mensagem com sucesso!")
+	fmt.Println("Alice assinou a mensagem com sucesso!")
 	fmt.Printf("[Assinatura]: %x\n\n", signature)
 
 	return signature, cipherMessage, nil
@@ -52,14 +57,14 @@ func (c *Chat) ReceiveMessage(message string, publicKey string, signature []byte
 		return err
 	}
 
-	fmt.Println("Alice verificou a autenticidade da mensagem com sucesso!")
+	fmt.Println("Bob verificou a autenticidade da mensagem com sucesso!")
 
 	messageDesciphered, err := util.DecryptMessage(privateKey, []byte(message))
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Alice descifrou a mensagem com sucesso!\n")
+	fmt.Printf("Bob descifrou a mensagem com sucesso!\n")
 	fmt.Printf("[Mensagem recebida]: %s\n\n", messageDesciphered)
 
 	return nil

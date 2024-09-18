@@ -18,7 +18,7 @@ func NewResendEmail(client *resend.Client) *ResendEmail {
 
 func (r *ResendEmail) Send(to []string, attachments []byte) error {
 	params := &resend.SendEmailRequest{
-		From:    "Chatbot <jairoevaristodev@gmail.com>",
+		From:    "Chatbot <onbording@resend.dev>",
 		To:      to,
 		Html:    "<p>Olá, essa é sua chave publica para troca de mensagens</p>",
 		Subject: "Sua chave pública chegou!",
